@@ -171,6 +171,19 @@ function renderLetter() {
   const data = letters[currentIndex];
 
   cardImage.src = data.image;
+
+  cardImage.onload = function () {
+    const ratio = this.naturalWidth / this.naturalHeight;
+
+    // remove old class
+    this.classList.remove("portrait");
+
+    // detect portrait image
+    if (ratio < 1) {
+      this.classList.add("portrait");
+    }
+  };
+
   cardDate.textContent = data.date;
   cardTitle.textContent = data.title;
   cardText.innerHTML = '';
