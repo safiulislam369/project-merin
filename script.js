@@ -172,21 +172,25 @@ function renderLetter() {
 
   cardImage.src = data.image;
 
+  /* SMART IMAGE */
   cardImage.onload = function () {
     const ratio = this.naturalWidth / this.naturalHeight;
-
-    // remove old class
     this.classList.remove("portrait");
-
-    // detect portrait image
-    if (ratio < 1) {
-      this.classList.add("portrait");
-    }
+    if (ratio < 1) this.classList.add("portrait");
   };
 
   cardDate.textContent = data.date;
   cardTitle.textContent = data.title;
-  cardText.innerHTML = '';
+
+  /* SMOOTH TYPEWRITER */
+  typeTextSmooth(cardText, data.text);
+}
+
+/* ============================================================
+   TYPEWRITER ANIMATION
+   ============================================================ */
+function typeTextSmooth(container, text) {
+  container.innerHTML = '';
 
   /* Cancel any running animation */
   if (rafId) {
@@ -197,22 +201,22 @@ function renderLetter() {
   /* Build character spans */
   const spans = [];
 
-  for (const char of data.text) {
+  for (const char of text) {
     if (char === '\n') {
-      cardText.appendChild(document.createElement('br'));
+      container.appendChild(document.createElement('br'));
       continue;
     }
     const span = document.createElement('span');
     span.className = 'tc';
     span.textContent = char;
-    cardText.appendChild(span);
+    container.appendChild(span);
     spans.push(span);
   }
 
   /* Blinking cursor */
   const cursor = document.createElement('span');
   cursor.className = 'cursor';
-  cardText.appendChild(cursor);
+  container.appendChild(cursor);
 
   /* Typewriter animation */
   const total    = spans.length;
