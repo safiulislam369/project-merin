@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Something From My Heart</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div id="hearts"></div>
+
+<div class="container">
+
+<h1 class="title">Something From My Heart</h1>
+<p class="subtitle">tap an envelope to open it ♡</p>
+
+<div class="grid" id="grid"></div>
+
+</div>
+
+<div class="overlay" id="overlay">
+
+<div class="card">
+
+<button class="close-btn" id="closeBtn">✕</button>
+
+<div class="card-content">
+
+<div class="image-side">
+<img id="cardImage" src="" alt="memory image">
+</div>
+
+<div class="text-side">
+<div class="date" id="cardDate"></div>
+<h2 class="letter-title" id="cardTitle"></h2>
+<div class="text" id="cardText"></div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<button class="music-btn" id="musicBtn">♫</button>
+<div class="tap-note">tap music button once</div>
+
+<audio id="bgMusic" loop>
+<source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<script src="script.js"></script>
+
+</body>
+</html>
