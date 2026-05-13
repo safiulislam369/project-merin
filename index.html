@@ -1,64 +1,59 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Something From My Heart</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Something From My Heart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div id="hearts"></div>
+  <!-- Floating hearts background -->
+  <div id="hearts"></div>
 
-<div class="container">
+  <!-- Main page -->
+  <div class="container">
+    <h1 class="page-title">Something From My Heart</h1>
+    <p class="subtitle">tap an envelope to open it ♡</p>
+    <div class="grid" id="grid"></div>
+  </div>
 
-<h1 class="title">Something From My Heart</h1>
-<p class="subtitle">tap an envelope to open it ♡</p>
+  <!-- Letter overlay -->
+  <div class="overlay" id="overlay">
+    <div class="card">
 
-<div class="grid" id="grid"></div>
+      <button class="close-btn" id="closeBtn" aria-label="Close">✕</button>
 
-</div>
+      <div class="card-content">
+        <div class="image-side">
+          <img id="cardImage" src="" alt="memory photo" />
+        </div>
+        <div class="text-side">
+          <div class="date" id="cardDate"></div>
+          <h2 class="letter-title" id="cardTitle"></h2>
+          <div class="text" id="cardText"></div>
+        </div>
+      </div>
 
-<div class="overlay" id="overlay">
+      <!-- Navigation row at bottom of card — never overlaps text -->
+      <div class="card-nav">
+        <button class="nav-btn" id="prevBtn" aria-label="Previous">← prev</button>
+        <button class="nav-btn" id="nextBtn" aria-label="Next">next →</button>
+      </div>
 
-<div class="card">
+    </div>
+  </div>
 
-<button class="close-btn" id="closeBtn">✕</button>
-<button class="nav-btn prev-btn" id="prevBtn">←</button>
-<button class="nav-btn next-btn" id="nextBtn">→</button>
+  <!-- Music -->
+  <button class="music-btn" id="musicBtn" aria-label="Toggle music">♫</button>
 
-<div class="card-content">
+  <audio id="bgMusic" loop>
+    <source src="song.mp3" type="audio/mpeg">
+  </audio>
 
-<div class="image-side">
-<img id="cardImage" src="" alt="memory image">
-</div>
-
-<div class="text-side">
-<div class="date" id="cardDate"></div>
-<h2 class="letter-title" id="cardTitle"></h2>
-<div class="text" id="cardText"></div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<button class="music-btn" id="musicBtn">♫</button>
-<div class="tap-note">tap music button once</div>
-
-<audio id="bgMusic" loop>
-<source src="song.mp3" type="audio/mpeg">
-</audio>
-
-<script src="script.js"></script>
-
+  <script src="script.js"></script>
 </body>
 </html>

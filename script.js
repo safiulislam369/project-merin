@@ -1,10 +1,13 @@
+/* ============================================================
+   LETTER DATA
+   ============================================================ */
 const letters = [
-{
-  title:'Just You',
-  label:'Just You ♡',
-  date:'for the quiet moments between us',
-  image:'IMG-20260427-WA0021 (2).jpg',
-  text:`Dear You,
+  {
+    title: 'Just You',
+    label: 'Just You ♡',
+    date:  'for the quiet moments between us',
+    image: 'IMG-20260427-WA0021 (2).jpg',
+    text: `Dear You,
 
 I still do not know how someone can become so important without even trying. Somehow, in the quietest way possible, you became part of my everyday thoughts, my happiest moments, and even the calm inside my chaos.
 
@@ -19,13 +22,13 @@ And maybe I do not always say it perfectly, but if there is one thing I know for
 loving you has been one of the most beautiful feelings I have ever known.
 
 Always yours.`
-},
-{
-  title:'On Difficult Days',
-  label:'You Matter ✨',
-  date:'for the days your heart feels heavy',
-  image:'655611037_18075124736532766_6580438201177208924_n.jpg',
-  text:`My Love,
+  },
+  {
+    title: 'On Difficult Days',
+    label: 'You Matter ✨',
+    date:  'for the days your heart feels heavy',
+    image: '655611037_18075124736532766_6580438201177208924_n.jpg',
+    text: `My Love,
 
 I know life gets heavy sometimes. I know there are days where your smile hides exhaustion, and moments where your heart carries more than you let people see.
 
@@ -51,13 +54,13 @@ And I want to be that person.
 
 Forever,
 Me`
-},
-{
-  title:'A Memory I Keep',
-  label:'A Memory ✨',
-  date:'for the moments that stayed with me',
-  image:'560619885_18057956744532766_1923795012228823938_n.jpg',
-  text:`Hey You,
+  },
+  {
+    title: 'A Memory I Keep',
+    label: 'A Memory ✨',
+    date:  'for the moments that stayed with me',
+    image: '560619885_18057956744532766_1923795012228823938_n.jpg',
+    text: `Hey You,
 
 There are certain moments I replay in my mind over and over again, and somehow every version of them still feels warm.
 
@@ -77,13 +80,13 @@ But even with that fear, I would still choose you every single time.
 Because some people are simply worth loving with your whole heart.
 
 And to me, you are one of them.`
-},
-{
-  title:'Still You',
-  label:'Still You ♡',
-  date:'for every version of forever',
-  image:'465184352_838212801582800_1361283291447919698_n (1).jpg',
-  text:`Dear Love,
+  },
+  {
+    title: 'Still You',
+    label: 'Still You ♡',
+    date:  'for every version of forever',
+    image: '465184352_838212801582800_1361283291447919698_n (1).jpg',
+    text: `Dear Love,
 
 I tried convincing myself that maybe these feelings would fade with time. That maybe distance, silence, or distraction would somehow make my heart quieter.
 
@@ -104,161 +107,207 @@ if my heart had to choose again, in every version of life, in every timeline, in
 it would still choose you.
 
 Always.`
-}
+  }
 ];
 
-const grid = document.getElementById('grid');
-const overlay = document.getElementById('overlay');
+/* ============================================================
+   STATE
+   ============================================================ */
+let currentIndex = 0;
+let rafId = null;
+
+/* ============================================================
+   DOM REFERENCES
+   ============================================================ */
+const grid      = document.getElementById('grid');
+const overlay   = document.getElementById('overlay');
 const cardImage = document.getElementById('cardImage');
-const cardDate = document.getElementById('cardDate');
+const cardDate  = document.getElementById('cardDate');
 const cardTitle = document.getElementById('cardTitle');
-const cardText = document.getElementById('cardText');
-const closeBtn = document.getElementById('closeBtn');
-const bgMusic = document.getElementById('bgMusic');
-const musicBtn = document.getElementById('musicBtn');
+const cardText  = document.getElementById('cardText');
+const closeBtn  = document.getElementById('closeBtn');
+const prevBtn   = document.getElementById('prevBtn');
+const nextBtn   = document.getElementById('nextBtn');
+const bgMusic   = document.getElementById('bgMusic');
+const musicBtn  = document.getElementById('musicBtn');
 
-let rafId;
+/* ============================================================
+   BUILD ENVELOPES
+   ============================================================ */
+letters.forEach((item, index) => {
+  const env = document.createElement('div');
+  env.className = 'envelope';
+  env.setAttribute('tabindex', '0');
+  env.setAttribute('role', 'button');
+  env.setAttribute('aria-label', `Open letter: ${item.title}`);
 
-letters.forEach((item,index)=>{
+  env.innerHTML = `
+    <span class="env-icon">✉</span>
+    <span class="env-label">${item.label}</span>
+  `;
 
-const envelope = document.createElement('div');
-envelope.className = 'envelope';
-envelope.setAttribute('tabindex','0');
+  env.addEventListener('click', () => openLetter(index));
+  env.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') openLetter(index);
+  });
 
-envelope.innerHTML = `
-<div class="env-inner">
-<div class="env-top">
-<div class="flap"></div>
-</div>
-<div class="env-bottom">
-<div class="env-text">${item.label}</div>
-</div>
-</div>
-`;
-
-envelope.addEventListener('click',()=>openLetter(index));
-
-envelope.addEventListener('keypress',(e)=>{
-if(e.key==='Enter') openLetter(index);
+  grid.appendChild(env);
 });
 
-grid.appendChild(envelope);
+/* ============================================================
+   OPEN LETTER
+   ============================================================ */
+function openLetter(index) {
+  currentIndex = index;
+  renderLetter();
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+/* ============================================================
+   RENDER CURRENT LETTER WITH TYPEWRITER
+   ============================================================ */
+function renderLetter() {
+  const data = letters[currentIndex];
+
+  cardImage.src = data.image;
+  cardDate.textContent = data.date;
+  cardTitle.textContent = data.title;
+  cardText.innerHTML = '';
+
+  /* Cancel any running animation */
+  if (rafId) {
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  }
+
+  /* Build character spans */
+  const spans = [];
+
+  for (const char of data.text) {
+    if (char === '\n') {
+      cardText.appendChild(document.createElement('br'));
+      continue;
+    }
+    const span = document.createElement('span');
+    span.className = 'tc';
+    span.textContent = char;
+    cardText.appendChild(span);
+    spans.push(span);
+  }
+
+  /* Blinking cursor */
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  cardText.appendChild(cursor);
+
+  /* Typewriter animation */
+  const total    = spans.length;
+  const duration = total * 26;   /* ms total for full text */
+  const startTs  = performance.now();
+  let lastShown  = -1;
+
+  function animate(now) {
+    const progress = Math.min((now - startTs) / duration, 1);
+    const upTo     = Math.floor(progress * total);
+
+    for (let i = lastShown + 1; i <= upTo && i < total; i++) {
+      spans[i].classList.add('show');
+      lastShown = i;
+    }
+
+    /* Move cursor after last revealed char */
+    if (spans[lastShown]) {
+      spans[lastShown].after(cursor);
+    }
+
+    if (lastShown < total - 1) {
+      rafId = requestAnimationFrame(animate);
+    } else {
+      cursor.remove();
+      rafId = null;
+    }
+  }
+
+  /* Short delay before typing starts */
+  setTimeout(() => {
+    rafId = requestAnimationFrame(animate);
+  }, 350);
+}
+
+/* ============================================================
+   CLOSE
+   ============================================================ */
+function closeLetter() {
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+  if (rafId) {
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  }
+}
+
+closeBtn.addEventListener('click', closeLetter);
+
+/* Click outside card to close */
+overlay.addEventListener('click', (e) => {
+  if (e.target === overlay) closeLetter();
 });
 
-function openLetter(index){
-
-const data = letters[index];
-
-cardImage.src = data.image;
-cardDate.textContent = data.date;
-cardTitle.textContent = data.title;
-cardText.innerHTML = '';
-
-overlay.classList.add('active');
-document.body.style.overflow = 'hidden';
-
-if(rafId) cancelAnimationFrame(rafId);
-
-const spans = [];
-
-for(let char of data.text){
-
-if(char === '\n'){
-cardText.appendChild(document.createElement('br'));
-continue;
-}
-
-const span = document.createElement('span');
-span.className = 'tc';
-span.textContent = char;
-cardText.appendChild(span);
-spans.push(span);
-}
-
-const cursor = document.createElement('span');
-cursor.className = 'cursor';
-cardText.appendChild(cursor);
-
-const total = spans.length;
-const duration = total * 28;
-const start = performance.now();
-let last = -1;
-
-function animate(now){
-
-const progress = Math.min((now - start) / duration,1);
-const current = Math.floor(progress * total);
-
-for(let i = last + 1; i <= current; i++){
-if(spans[i]) spans[i].classList.add('show');
-last = i;
-}
-
-if(spans[last]){
-spans[last].after(cursor);
-}
-
-if(last < total - 1){
-rafId = requestAnimationFrame(animate);
-}else{
-cursor.remove();
-}
-}
-
-setTimeout(()=>{
-rafId = requestAnimationFrame(animate);
-},400);
-}
-
-function closeLetter(){
-overlay.classList.remove('active');
-document.body.style.overflow = 'auto';
-if(rafId) cancelAnimationFrame(rafId);
-}
-
-closeBtn.addEventListener('click',closeLetter);
-
-overlay.addEventListener('click',(e)=>{
-if(e.target === overlay) closeLetter();
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+nextBtn.addEventListener('click', () => {
+  currentIndex = (currentIndex + 1) % letters.length;
+  renderLetter();
 });
 
-document.addEventListener('keydown',(e)=>{
-if(e.key === 'Escape') closeLetter();
+prevBtn.addEventListener('click', () => {
+  currentIndex = (currentIndex - 1 + letters.length) % letters.length;
+  renderLetter();
 });
 
-musicBtn.addEventListener('click',()=>{
-
-if(bgMusic.paused){
-
-bgMusic.play();
-musicBtn.innerHTML = '❚❚';
-
-}else{
-
-bgMusic.pause();
-musicBtn.innerHTML = '♫';
-
-}
-
+/* Keyboard navigation */
+document.addEventListener('keydown', (e) => {
+  if (!overlay.classList.contains('active')) return;
+  if (e.key === 'Escape')     closeLetter();
+  if (e.key === 'ArrowRight') nextBtn.click();
+  if (e.key === 'ArrowLeft')  prevBtn.click();
 });
 
-function createHearts(){
+/* ============================================================
+   MUSIC
+   ============================================================ */
+musicBtn.addEventListener('click', () => {
+  if (bgMusic.paused) {
+    bgMusic.play().catch(() => {}); /* ignore autoplay policy errors */
+    musicBtn.innerHTML = '❚❚';
+    musicBtn.classList.add('playing');
+  } else {
+    bgMusic.pause();
+    musicBtn.innerHTML = '♫';
+    musicBtn.classList.remove('playing');
+  }
+});
 
-const hearts = document.getElementById('hearts');
+/* ============================================================
+   FLOATING HEARTS
+   ============================================================ */
+(function spawnHearts() {
+  const container  = document.getElementById('hearts');
+  const symbols    = ['♥', '♡', '❤'];
+  const COUNT      = 26;
 
-for(let i=0;i<28;i++){
+  for (let i = 0; i < COUNT; i++) {
+    const h = document.createElement('div');
+    h.className   = 'heart';
+    h.textContent = symbols[Math.floor(Math.random() * symbols.length)];
 
-const heart = document.createElement('div');
-heart.className = 'heart';
-heart.innerHTML = '♥';
+    h.style.left            = Math.random() * 100 + '%';
+    h.style.fontSize        = (9 + Math.random() * 18) + 'px';
+    h.style.animationDuration  = (9 + Math.random() * 11) + 's';
+    h.style.animationDelay     = (-Math.random() * 14) + 's';
 
-heart.style.left = Math.random()*100 + '%';
-heart.style.fontSize = (10 + Math.random()*20) + 'px';
-heart.style.animationDuration = (10 + Math.random()*12) + 's';
-heart.style.animationDelay = (-Math.random()*12) + 's';
-
-hearts.appendChild(heart);
-}
-}
-
-createHearts();
+    container.appendChild(h);
+  }
+})();
